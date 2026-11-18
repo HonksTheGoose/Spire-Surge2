@@ -1,0 +1,21 @@
+{
+  "_comment": "Enchantments gear can receive. Only enchantments that the item can legally hold are ever applied. weight = chance relative to the others, min_level/max_level = level range (scaled up with tier), min_tier = lowest gear tier that can roll it. Enchantments from mods that are not installed are skipped. The config's enchantWhitelist / enchantBlacklist can narrow this list further.",
+  "entries": [
+    { "enchantment": "minecraft:protection", "weight": 10, "min_level": 1, "max_level": 4 },
+    { "enchantment": "minecraft:fire_protection", "weight": 4, "min_level": 1, "max_level": 4 },
+    { "enchantment": "minecraft:blast_protection", "weight": 4, "min_level": 1, "max_level": 4 },
+    { "enchantment": "minecraft:projectile_protection", "weight": 4, "min_level": 1, "max_level": 4 },
+    { "enchantment": "minecraft:feather_falling", "weight": 3, "min_level": 1, "max_level": 4 },
+    { "enchantment": "minecraft:thorns", "weight": 3, "min_level": 1, "max_level": 3, "min_tier": 2 },
+    { "enchantment": "minecraft:unbreaking", "weight": 5, "min_level": 1, "max_level": 3 },
+    { "enchantment": "minecraft:sharpness", "weight": 10, "min_level": 1, "max_level": 5 },
+    { "enchantment": "minecraft:smite", "weight": 4, "min_level": 1, "max_level": 5 },
+    { "enchantment": "minecraft:bane_of_arthropods", "weight": 2, "min_level": 1, "max_level": 5 },
+    { "enchantment": "minecraft:knockback", "weight": 4, "min_level": 1, "max_level": 2 },
+    { "enchantment": "minecraft:fire_aspect", "weight": 3, "min_level": 1, "max_level": 2, "min_tier": 2 },
+    { "enchantment": "minecraft:sweeping_edge", "weight": 3, "min_level": 1, "max_level": 3 },
+    { "enchantment": "minecraft:power", "weight": 10, "min_level": 1, "max_level": 5 },
+    { "enchantment": "minecraft:punch", "weight": 4, "min_level": 1, "max_level": 2 },
+    { "enchantment": "minecraft:flame", "weight": 3, "min_level": 1, "max_level": 1, "min_tier": 2 }
+  ]
+}

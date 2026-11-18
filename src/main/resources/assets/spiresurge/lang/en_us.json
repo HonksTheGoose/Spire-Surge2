@@ -1,0 +1,7 @@
+{
+  "message.spiresurge.not_lit": "The Spire Heart must be lit before a surge can be started.",
+  "message.spiresurge.already_active": "This Spire Heart is already surging.",
+  "message.spiresurge.started": "The Spire Heart flares red! Monsters within %1$s blocks grow stronger for %2$s.",
+  "message.spiresurge.extended": "The surge is renewed! Monsters within %1$s blocks stay empowered for %2$s.",
+  "message.spiresurge.ended": "The Spire Heart's red glow fades. The surge is over."
+}

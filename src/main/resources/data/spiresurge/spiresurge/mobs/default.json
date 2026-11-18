@@ -1,0 +1,16 @@
+{
+  "_comment": "Surge mob pool. 'entity' is an entity id, or a #tag. weight = spawn chance relative to the others (0 = never spawned by the surge, but still gets gear when it spawns naturally during one). equip=false = no gear. gear_multiplier scales this mob's gear tier. slots = which slots get gear (head, chest, legs, feet, mainhand, offhand). Any mod or datapack can add its own file in data/<namespace>/spiresurge/mobs/.",
+  "entries": [
+    { "entity": "minecraft:zombie", "weight": 30 },
+    { "entity": "minecraft:husk", "weight": 8 },
+    { "entity": "minecraft:zombie_villager", "weight": 4 },
+    { "entity": "minecraft:drowned", "weight": 0 },
+    { "entity": "minecraft:skeleton", "weight": 25 },
+    { "entity": "minecraft:stray", "weight": 6 },
+    { "entity": "minecraft:bogged", "weight": 6 },
+    { "entity": "minecraft:creeper", "weight": 14, "equip": false },
+    { "entity": "minecraft:spider", "weight": 14, "equip": false },
+    { "entity": "minecraft:witch", "weight": 3, "slots": ["head"], "gear_multiplier": 0.5 },
+    { "entity": "#mobtowers:tower_summoned", "weight": 10 }
+  ]
+}
