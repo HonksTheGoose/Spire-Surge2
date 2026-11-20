@@ -39,6 +39,19 @@ public final class LootPoolConfig {
         return cachedEntries;
     }
 
+    private static volatile String cachedBonusRaw;
+    private static volatile List<Entry> cachedBonus = List.of();
+
+    /** The [bonusDrops] entries, parsed with the same rules as the pool. */
+    public static List<Entry> bonusEntries() {
+        String raw = SurgeConfig.BONUS_ENTRIES.get();
+        if (!raw.equals(cachedBonusRaw)) {
+            cachedBonus = parse(raw);
+            cachedBonusRaw = raw;
+        }
+        return cachedBonus;
+    }
+
     static List<Entry> parse(String raw) {
         List<Entry> out = new ArrayList<>();
         for (String part : SurgeConfig.csv(raw)) {

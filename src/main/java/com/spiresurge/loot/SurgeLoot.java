@@ -40,6 +40,44 @@ public final class SurgeLoot {
         }
     }
 
+    /** Does this mob get the general looting bonus? Any mob except blacklisted (boss) ones. */
+    public static boolean qualifiesForLooting(Entity entity) {
+        return SurgeConfig.ENABLED.get() && SurgeConfig.GENERAL_LOOTING_LEVEL.get() > 0
+                && entity instanceof Mob mob && !EntityFilter.lootBlacklist().blocks(mob.getType());
+    }
+
+    /** Does this dying mob get the [bonusDrops]? Only monsters spawned by, or dying inside, an active surge. */
+    public static boolean qualifiesForBonus(Entity entity, ServerLevel level) {
+        if (!SurgeConfig.ENABLED.get() || !SurgeConfig.BONUS_ENABLED.get() || !(entity instanceof Mob mob)) {
+            return false;
+        }
+        if (EntityFilter.lootBlacklist().blocks(mob.getType())) {
+            return false;
+        }
+        return mob.getTags().contains(SurgeManager.TAG_SPAWNED)
+                || (isMonster(mob) && SurgeManager.isInsideSurge(level, mob.position()));
+    }
+
+    /**
+     * Emulates Looting: every normal stackable drop grows by round(level * random 0..1), the same formula
+     * vanilla's looting count bonus uses (about +1 per drop at level 2). Gear and other single items are left alone.
+     */
+    public static ObjectArrayList<ItemStack> applyLooting(List<ItemStack> loot, int level, RandomSource random) {
+        ObjectArrayList<ItemStack> out = new ObjectArrayList<>();
+        for (ItemStack stack : loot) {
+            if (stack.isEmpty()) {
+                continue;
+            }
+            if (stack.getMaxStackSize() <= 1) {
+                out.add(stack);
+                continue;
+            }
+            int extra = Math.round(level * random.nextFloat());
+            addSplit(out, stack, stack.getCount() + extra);
+        }
+        return out;
+    }
+
     /** Hostile mobs, plus anything that is in the surge mob pool (which may include modded creatures). */
     private static boolean isMonster(Mob mob) {
         return mob instanceof Enemy || MobPool.get().find(mob.getType()) != null;
@@ -68,11 +106,18 @@ public final class SurgeLoot {
 
     /** Rolls the config pool and appends whatever drops. */
     public static void rollPool(List<ItemStack> into, RandomSource random) {
-        List<LootPoolConfig.Entry> entries = LootPoolConfig.entries();
+        rollEntries(into, LootPoolConfig.entries(), SurgeConfig.POOL_ROLLS.get(), random);
+    }
+
+    /** Rolls the [bonusDrops] list once and appends whatever drops. */
+    public static void rollBonus(List<ItemStack> into, RandomSource random) {
+        rollEntries(into, LootPoolConfig.bonusEntries(), 1, random);
+    }
+
+    private static void rollEntries(List<ItemStack> into, List<LootPoolConfig.Entry> entries, int rolls, RandomSource random) {
         if (entries.isEmpty()) {
             return;
         }
-        int rolls = SurgeConfig.POOL_ROLLS.get();
         for (int r = 0; r < rolls; r++) {
             for (LootPoolConfig.Entry entry : entries) {
                 if (random.nextDouble() < entry.chance()) {

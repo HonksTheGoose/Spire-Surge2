@@ -64,6 +64,8 @@ If the Heart is not lit, the tear is **not** used and the click is swallowed, so
 | `[loot]` | `entityBlacklist` | bosses | Never touched by the loot changes |
 | `[lootPool]` | `mode` | REPLACE | OFF / ADD / REPLACE (see below) |
 | `[lootPool]` | `entries`, `rolls` | see file | Your custom pool |
+| `[looting]` | `generalLootingLevel` | 2 | Every mob a player kills drops as if killed with Looting II (0 = off) |
+| `[bonusDrops]` | `enabled`, `entries` | true / `heart_crystals:heart_crystal=15` | Extra drops always added on top, only for monsters in a surge. Same `item=chancexMin-Max` format as the pool |
 | `[visuals]` | `tintCore`, `coreTintColor`, `pulse` | true / FF2A2A / true | The red glow on the Heart |
 | `[visuals]` | `redParticles`, `particleTintColor` | true / FF2A2A | Red Spawn Spires particles inside a surge |
 | `[visuals]` | `redGrimstone`, `grimstoneTintColor` | true / FF3A3A | Red Seeping Grimstone inside a surge |

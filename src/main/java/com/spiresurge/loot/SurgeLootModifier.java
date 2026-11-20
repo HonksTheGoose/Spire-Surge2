@@ -5,6 +5,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.spiresurge.SpireSurge;
 import com.spiresurge.SurgeConfig;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -36,23 +37,35 @@ public class SurgeLootModifier extends LootModifier {
     protected ObjectArrayList<ItemStack> doApply(ObjectArrayList<ItemStack> generatedLoot, LootContext context) {
         try {
             Entity entity = context.getParamOrNull(LootContextParams.THIS_ENTITY);
-            if (entity == null || !SurgeLoot.qualifies(entity, context.getLevel())) {
+            if (entity == null) {
                 return generatedLoot;
             }
-            if (SurgeConfig.LOOT_REQUIRE_PLAYER_KILL.get()
-                    && context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER) == null) {
-                return generatedLoot;
+            boolean playerKill = context.getParamOrNull(LootContextParams.LAST_DAMAGE_PLAYER) != null;
+            RandomSource random = context.getRandom();
+            ObjectArrayList<ItemStack> result = generatedLoot;
+
+            // 1. General looting: every mob a player kills, surge or not.
+            if (playerKill && SurgeLoot.qualifiesForLooting(entity)) {
+                result = SurgeLoot.applyLooting(result, SurgeConfig.GENERAL_LOOTING_LEVEL.get(), random);
             }
 
-            SurgeConfig.PoolMode mode = SurgeConfig.POOL_MODE.get();
-            ObjectArrayList<ItemStack> result;
-            if (mode == SurgeConfig.PoolMode.REPLACE) {
-                result = new ObjectArrayList<>();
-            } else {
-                result = SurgeLoot.multiply(generatedLoot, SurgeConfig.LOOT_DROP_MULTIPLIER.get(), context.getRandom());
+            // 2. Surge loot: multiplied drops and/or the custom pool.
+            boolean allowed = playerKill || !SurgeConfig.LOOT_REQUIRE_PLAYER_KILL.get();
+            if (allowed && SurgeLoot.qualifies(entity, context.getLevel())) {
+                SurgeConfig.PoolMode mode = SurgeConfig.POOL_MODE.get();
+                if (mode == SurgeConfig.PoolMode.REPLACE) {
+                    result = new ObjectArrayList<>();
+                } else {
+                    result = SurgeLoot.multiply(result, SurgeConfig.LOOT_DROP_MULTIPLIER.get(), random);
+                }
+                if (mode != SurgeConfig.PoolMode.OFF) {
+                    SurgeLoot.rollPool(result, random);
+                }
             }
-            if (mode != SurgeConfig.PoolMode.OFF) {
-                SurgeLoot.rollPool(result, context.getRandom());
+
+            // 3. Bonus drops (e.g. heart crystals): always on top, only for surge monsters.
+            if (allowed && SurgeLoot.qualifiesForBonus(entity, context.getLevel())) {
+                SurgeLoot.rollBonus(result, random);
             }
             return result;
         } catch (RuntimeException e) {

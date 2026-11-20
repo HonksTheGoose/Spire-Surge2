@@ -103,6 +103,13 @@ public final class SurgeConfig {
     public static final ModConfigSpec.IntValue POOL_ROLLS;
     public static final ModConfigSpec.ConfigValue<String> POOL_ENTRIES;
 
+    // ---- [looting] --------------------------------------------------------
+    public static final ModConfigSpec.IntValue GENERAL_LOOTING_LEVEL;
+
+    // ---- [bonusDrops] -----------------------------------------------------
+    public static final ModConfigSpec.BooleanValue BONUS_ENABLED;
+    public static final ModConfigSpec.ConfigValue<String> BONUS_ENTRIES;
+
     // ---- [visuals] --------------------------------------------------------
     public static final ModConfigSpec.BooleanValue TINT_CORE;
     public static final ModConfigSpec.ConfigValue<String> CORE_TINT_COLOR;
@@ -250,6 +257,26 @@ public final class SurgeConfig {
                         + "minecraft:experience_bottle=8x1-2, minecraft:iron_ingot=6x1-2, minecraft:gold_ingot=4, "
                         + "minecraft:diamond=2, minecraft:golden_apple=1.5, minecraft:ghast_tear=1.5, "
                         + "minecraft:netherite_scrap=0.4");
+        B.pop();
+
+        B.push("looting");
+        GENERAL_LOOTING_LEVEL = B.comment("Extra 'Looting' applied to EVERY mob a player kills, in or out of a surge (passive animals too).",
+                        "2 = behaves as if every kill was made with Looting II. 0 = off. Stacks with a real Looting enchantment.",
+                        "How it works: each normal stackable drop gets a random bonus of up to this many extra items (about +1 on average",
+                        "at level 2, like vanilla Looting II on bones or rotten flesh). It does not raise the chance of rare drops.",
+                        "Uses loot.entityBlacklist to skip bosses. Applies to the mob's normal drops, not to the custom lootPool.")
+                .defineInRange("generalLootingLevel", 2, 0, 10);
+        B.pop();
+
+        B.push("bonusDrops");
+        BONUS_ENABLED = B.comment("Bonus drops that are ALWAYS added on top of whatever else drops (normal drops or the lootPool),",
+                        "but only for monsters killed inside an active surge (or spawned by one).")
+                .define("enabled", true);
+        BONUS_ENTRIES = B.comment("Comma separated entries, same format as lootPool.entries:  item_id=chance   or   item_id=chancexMin-Max",
+                        "chance is a percentage 0 - 100. Each entry is rolled separately on every kill.",
+                        "Items from mods that are not installed are skipped.",
+                        "Uses loot.requirePlayerKill and loot.entityBlacklist.")
+                .define("entries", "heart_crystals:heart_crystal=15");
         B.pop();
 
         B.push("visuals");
